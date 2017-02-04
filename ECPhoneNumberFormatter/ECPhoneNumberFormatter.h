@@ -21,7 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+//source: https://github.com/enriquez/ECPhoneNumberFormatter
+
 #import <Foundation/Foundation.h>
 
 @interface ECPhoneNumberFormatter : NSFormatter
+{
+    NSString *internationalID;
+}
 @end

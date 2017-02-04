@@ -40,7 +40,8 @@
 
 #pragma mark - NSFormatter
 
-- (NSString *)stringForObjectValue:(id)anObject {
+- (NSString *)stringForObjectValue:(id)anObject
+{
     if (![anObject isKindOfClass:[NSString class]]) return nil;
     if ([anObject length] < 1) return nil;
 
@@ -50,12 +51,24 @@
 
     NSString *firstNumber = [unformatted substringToIndex:1],
     *output;
-
-    if ([firstNumber isEqualToString:@"1"]) {
+    
+    if ([unformatted length] > 7) {
+        internationalID = [unformatted substringToIndex:[unformatted length] - 10];
+    }
+    else
+    {
+        internationalID = @"";
+    }
+    
+    if ([unformatted length] > 10)
+    {
         output = [self parseStringStartingWithOne:unformatted];
-    } else {
+    }
+    else
+    {
         output = [self parseString:unformatted];
     }
+    
     return output;
 }
 
@@ -91,6 +104,7 @@
 
 - (NSString *)stripNonDigits:(NSString *)input {
     NSCharacterSet *doNotWant = [[NSCharacterSet decimalDigitCharacterSet] invertedSet];
+    
     return [[input componentsSeparatedByCharactersInSet: doNotWant] componentsJoinedByString: @""];
 }
 
@@ -114,12 +128,14 @@
     return formattedLocationNew;
 }
 
-- (NSString *)parseLastSevenDigits:(NSString *)input {
+- (NSString *)parseLastSevenDigits:(NSString *)input
+{
     NSString *output;
     NSMutableString *obj = [NSMutableString stringWithString:input];
+    NSLog(@"%@", input);
 
-    if ([obj length] >= 4 && [obj length] <= 7) {
-        [obj insertString:@"-" atIndex:3];
+    if ([obj length] >= 4 /*&& [obj length] <= 7*/) {
+        [obj insertString:@"-" atIndex:[obj length] - 4];
         output = obj;
     } else {
         output = obj;
@@ -132,7 +148,7 @@
     NSString *output;
     NSUInteger len = input.length;
 
-    if (len >= 8 && len <= 10) {
+    if (len >= 8 /*&& len <= 10*/) {
         NSString *areaCode  = [obj substringToIndex:3];
         NSString *lastSeven = [self parseLastSevenDigits:[obj substringFromIndex:3]];
         output = [NSString stringWithFormat:@"(%@) %@", areaCode, lastSeven];
@@ -144,26 +160,28 @@
     return output;
 }
 
-- (NSString *)parsePartialStringStartingWithOne:(NSString *)input {
-    NSMutableString *partialAreaCode = [NSMutableString stringWithString:[input substringFromIndex:1]];
+- (NSString *)parsePartialStringStartingWithOne:(NSString *)input
+{
+    NSMutableString *partialAreaCode = [NSMutableString stringWithString:[input substringFromIndex:[input length] - [input length] + [internationalID length]]];
     NSUInteger numSpaces = 3 - partialAreaCode.length, i;
-
+    
     for (i = 0; i < numSpaces; i++) {
         [partialAreaCode appendString:@" "];
     }
-    return [NSString stringWithFormat:@"1 (%@)", partialAreaCode];
+    return [NSString stringWithFormat:@"(%@)", partialAreaCode];
 }
 
 - (NSString *)parseStringStartingWithOne:(NSString *)input {
     NSUInteger len = input.length;
     NSString *output;
 
-    if (len == 1 || len >= 12) {
+    if (len == 1 /*|| len >= 12*/) {
         output = input;
-    } else if (len > 4) {
-        NSString *firstPart  = [self parsePartialStringStartingWithOne:[input substringToIndex:4]];
-        NSString *secondPart = [self parseLastSevenDigits:[input substringFromIndex:4]];
-        output = [NSString stringWithFormat:@"%@ %@", firstPart, secondPart];
+    } else if (len > 4)
+    {
+        NSString *firstPart  = [self parsePartialStringStartingWithOne:[input substringToIndex:[input length] - 7]];
+        NSString *secondPart = [self parseLastSevenDigits:[input substringFromIndex:[input length] - 7]];
+        output = [NSString stringWithFormat:@"%@ %@ %@", internationalID, firstPart, secondPart];
     } else {
         output = [NSString stringWithFormat:@"%@", [self parsePartialStringStartingWithOne:input]];
     }
