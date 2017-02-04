@@ -1,6 +1,10 @@
-# ECPhoneNumberFormatter
+# InternationalECPhoneNumberFormatter
 
 NSFormatter subclass for formatting phone numbers.
+
+## Note from Sn0wCh1ld
+
+This is the exact same number formatter from the enriquez repo, but now supports other country codes than +1. However, it still only supports the X (XXX) XXX-XXXX phone number format. Everything else is the same.
 
 ## Usage
 
